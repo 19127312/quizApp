@@ -1,4 +1,3 @@
-import './App.css';
 import AuthPage from './Component/Auth/AuthPage';
 /**
  * 

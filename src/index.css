@@ -7,7 +7,7 @@
 }
 
 body{
-  background: url("./background.png");
+  background: rgba(26,27,58,255);
   background-size: cover;
   font-family:  "Raleway", sans-serif;
   
