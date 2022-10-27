@@ -1,14 +1,17 @@
 import styled from "styled-components";
-
+import { Color } from '../Constant'
 
 export const StyledButton = styled.button`
-  background: linear-gradient(to right, #14163c 0%, #03217b 79%);
+  background: ${Color.primary};
   text-transform: uppercase;
   letter-spacing: 0.2rem;
-  width: 65%;
+  width: 50%;
   height: 3rem;
   border: none;
   color: white;
-  border-radius: 2rem;
+  border-radius: 6px;
   cursor: pointer;
+  font-family: 'Public Sans', sans-serif;
+  
+  margin: ${props => props.marginSize || 0}rem 0 1rem 0;
 `;
