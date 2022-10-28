@@ -1,15 +1,24 @@
 import React, { useState, useEffect } from 'react'
 import styled from "styled-components"
-import { StyledInputContainer, StyledInputRowContainer, InputRadio, StyledLabel } from './Input'
-import { Color, Image } from '../Constant'
+import { StyledInputContainer, StyledInputRowContainer, InputRadio } from './Input'
+import { Color } from '../Constant'
 import loginPagePicture from '../assets/loginPagePicture.png'
 import { StyledButton } from './Button'
 export default function AuthPage() {
-    const [name, setName] = useState("")
-    const [email, setEmail] = useState('');
-    const [pwd, setPwd] = useState('');
+    const [fullName, setfullName] = useState("")
+    const [email, setEmail] = useState("");
+    const [pwd, setPwd] = useState("");
+
     const [isSignup, setIsSignup] = useState(true);
     const [select, setSelect] = useState("Student");
+
+
+    const [error, setError] = useState({
+        email: "",
+        password: "",
+        fullName: "",
+    })
+
 
     const handleSelectChange = event => {
         const value = event.target.value;
@@ -17,11 +26,39 @@ export default function AuthPage() {
     };
 
     const handleSubmit = (e) => {
-        console.log(email, pwd);
+        e.preventDefault();
+        if (isSignup) {
+            if (fullName.length === 0) {
+                setError(prev => ({ ...prev, fullName: "Full name is required" }))
+            } else {
+                setError(prev => ({ ...prev, fullName: "" }))
+            }
+        }
+
+        if (email.length === 0) {
+            console.log("Hello")
+            setError(prev => ({ ...prev, email: "Email is required" }))
+        } else if (email.includes("@") === false) {
+            setError(prev => ({ ...prev, email: "Email is invalid" }))
+        } else {
+            setError(prev => ({ ...prev, email: "" }))
+        }
+
+        if (pwd.length === 0) {
+            setError(prev => ({ ...prev, password: "Password is required" }))
+        } else if (pwd.length < 6) {
+            setError(prev => ({ ...prev, password: "Password must be at least 6 characters" }))
+        } else {
+            setError(prev => ({ ...prev, password: "" }))
+        }
+
     }
     const switchMode = () => {
         setIsSignup((prevIsSignup) => !prevIsSignup);
+        setError({ email: "", password: "", fullName: "" })
     }
+
+
     return (
         <AuthContainer>
 
@@ -32,8 +69,9 @@ export default function AuthPage() {
                         label="Full name"
                         type="text"
                         placeholder="Enter your name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)} /> : <></>
+                        value={fullName}
+                        error={error.fullName ? error.fullName : null}
+                        onChange={(e) => setfullName(e.target.value)} /> : <></>
                 }
 
                 <StyledInputContainer
@@ -41,12 +79,14 @@ export default function AuthPage() {
                     type="email"
                     placeholder="example@gmail.com"
                     value={email}
+                    error={error.email ? error.email : null}
                     onChange={(e) => setEmail(e.target.value)} />
                 <StyledInputContainer
                     label="Password"
                     type="password"
                     placeholder="Enter your password"
                     value={pwd}
+                    error={error.password ? error.password : null}
                     onChange={(e) => setPwd(e.target.value)} />
 
                 {
@@ -70,7 +110,7 @@ export default function AuthPage() {
                 <StyledSignMode onClick={switchMode}>{isSignup ? "Sign In" : "Sign Up"}</StyledSignMode>
             </AuthFormContainer>
             <AuthContainerImage >
-                <img src={loginPagePicture} />
+                <img src={loginPagePicture} alt="Login Page " />
                 <StyledImagePhrase>Welcome to Education Platform</StyledImagePhrase>
                 <StyledImageSecondPhrase>For student and teacher</StyledImageSecondPhrase>
             </AuthContainerImage>

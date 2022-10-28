@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Icon } from 'react-icons-kit'
 import { eye } from 'react-icons-kit/feather/eye'
 import { eyeOff } from 'react-icons-kit/feather/eyeOff'
+import { Color } from '../Constant';
 
 export function StyledInputContainer({ label, ...props }) {
   const [type, setType] = useState('password');
@@ -25,10 +26,20 @@ export function StyledInputContainer({ label, ...props }) {
     </StyledInputPasswordIcon>
   </StyledInputRowContainer>
 
-
-  return <StyledInputBox>
+  const input = <>
     <StyledLabel>{label}</StyledLabel>
     {props.type === 'password' ? passwordInput : <StyledInput {...props} />}
+  </>
+  return <StyledInputBox>
+    {props.error ?
+      <StyledErrorBox>
+        {input}
+      </StyledErrorBox>
+      :
+      <>
+        {input}
+      </>}
+    {props.error ? <StyledError>{props.error}</StyledError> : <></>}
   </StyledInputBox>
 }
 
@@ -41,7 +52,25 @@ export function InputRadio({ label, ...props }) {
 
 
 }
+const StyledError = styled.p`
+  color: ${Color.error100};
+  background-color: ${Color.error300};
+  padding-left: 1rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  border-radius: 0.25rem;
+  font-family: 'Public Sans', sans-serif;
+  font-size: 0.80rem;
+`
 
+const StyledErrorBox = styled.div`
+  border-style: solid;
+  border-width: 2px;
+  border-color: red;
+  display: flex;
+  flex-direction: column;\
+  border-radius: 0.25rem;
+`
 const StyledInputRadio = styled.input`
   type: radio;
   cursor: pointer;
@@ -83,6 +112,7 @@ const StyledInputBox = styled.div`
   margin: 0.5rem 0;
   background: rgba(243,244,246,255);
   border-radius: 6px;
+  
 `
 
 const StyledLabel = styled.label`

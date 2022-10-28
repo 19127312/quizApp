@@ -1,8 +1,5 @@
 import AuthPage from './Component/Auth/AuthPage';
-/**
- * 
- * @returns 
- */
+
 function App() {
 
 
