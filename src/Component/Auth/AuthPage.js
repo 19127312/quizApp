@@ -75,8 +75,8 @@ export default function AuthPage() {
                     headers: {
                         'Content-Type': 'application/json',
 
-                    },
-                    withCredentials: true
+                    }
+
                 });
             console.log(data)
         } catch (error) {
@@ -91,8 +91,8 @@ export default function AuthPage() {
                     headers: {
                         'Content-Type': 'application/json',
 
-                    },
-                    withCredentials: true
+                    }
+
                 });
             console.log(data)
         } catch (error) {
