@@ -4,13 +4,16 @@ import { StyledInputContainer, StyledInputRowContainer, InputRadio } from './Inp
 import { Color } from '../Constant'
 import loginPagePicture from '../assets/loginPagePicture.png'
 import { StyledButton } from './Button'
+import axios from '../api'
+import { PATH } from '../api'
+
 export default function AuthPage() {
     const [fullName, setfullName] = useState("")
     const [email, setEmail] = useState("");
     const [pwd, setPwd] = useState("");
 
     const [isSignup, setIsSignup] = useState(true);
-    const [select, setSelect] = useState("Student");
+    const [type, setType] = useState("Student");
 
 
     const [error, setError] = useState({
@@ -22,10 +25,10 @@ export default function AuthPage() {
 
     const handleSelectChange = event => {
         const value = event.target.value;
-        setSelect(value);
+        setType(value);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (isSignup) {
             if (fullName.length === 0) {
@@ -52,6 +55,51 @@ export default function AuthPage() {
             setError(prev => ({ ...prev, password: "" }))
         }
 
+        if (isSignup) {
+            if (error.email === "" && error.password === "" && error.fullName === "") {
+                await signUp(email, pwd, fullName, type);
+            }
+        } else {
+            if (error.email === "" && error.password === "") {
+                await signIn(email, pwd);
+            }
+        }
+
+
+    }
+
+    const signIn = async (email, password) => {
+        try {
+            const { data } = await axios.post(PATH.LOGIN, JSON.stringify({ email, password }),
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+                    },
+                    withCredentials: true
+                });
+            console.log(data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const signUp = async (email, password, fullName, type) => {
+        try {
+            const { data } = await axios.post(PATH.REGISTER, JSON.stringify({ email, password, fullName, type }),
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+                    },
+                    withCredentials: true
+                });
+            console.log(data)
+        } catch (error) {
+            console.log(error);
+        }
     }
     const switchMode = () => {
         setIsSignup((prevIsSignup) => !prevIsSignup);
@@ -95,12 +143,12 @@ export default function AuthPage() {
                         <InputRadio
                             label="Student"
                             value="Student"
-                            checked={select === "Student"}
+                            checked={type === "Student"}
                             onChange={event => handleSelectChange(event)} />
                         <InputRadio
                             label="Teacher"
                             value="Teacher"
-                            checked={select === "Teacher"}
+                            checked={type === "Teacher"}
                             onChange={event => handleSelectChange(event)} />
                     </StyledInputRowContainer> : <></>
                 }
