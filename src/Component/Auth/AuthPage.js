@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import styled from "styled-components"
 import { StyledInputContainer, StyledInputRowContainer, InputRadio } from './Input'
 import { Color } from '../Constant'
@@ -22,6 +22,8 @@ export default function AuthPage() {
         fullName: "",
     })
 
+    const [serverError, setServerError] = useState("")
+
 
     const handleSelectChange = event => {
         const value = event.target.value;
@@ -29,41 +31,56 @@ export default function AuthPage() {
     };
 
     const handleSubmit = async (e) => {
+        let hasError = false;
         e.preventDefault();
         if (isSignup) {
             if (fullName.length === 0) {
                 setError(prev => ({ ...prev, fullName: "Full name is required" }))
+                hasError = true;
             } else {
                 setError(prev => ({ ...prev, fullName: "" }))
             }
         }
 
         if (email.length === 0) {
-            console.log("Hello")
             setError(prev => ({ ...prev, email: "Email is required" }))
+            hasError = true;
         } else if (email.includes("@") === false) {
             setError(prev => ({ ...prev, email: "Email is invalid" }))
+            hasError = true;
         } else {
             setError(prev => ({ ...prev, email: "" }))
         }
 
         if (pwd.length === 0) {
             setError(prev => ({ ...prev, password: "Password is required" }))
+            hasError = true;
+
         } else if (pwd.length < 6) {
             setError(prev => ({ ...prev, password: "Password must be at least 6 characters" }))
+            hasError = true;
         } else {
             setError(prev => ({ ...prev, password: "" }))
         }
 
-        if (isSignup) {
-            if (error.email === "" && error.password === "" && error.fullName === "") {
-                await signUp(email, pwd, fullName, type);
-            }
-        } else {
-            if (error.email === "" && error.password === "") {
-                await signIn(email, pwd);
+
+        if (!hasError) {
+
+            if (isSignup) {
+                await authenticateMode(PATH.REGISTER, {
+                    email,
+                    password: pwd,
+                    fullName,
+                    type
+                });
+            } else {
+                await authenticateMode(PATH.LOGIN, {
+                    email,
+                    password: pwd
+                });
             }
         }
+
 
 
     }
@@ -74,13 +91,11 @@ export default function AuthPage() {
                 {
                     headers: {
                         'Content-Type': 'application/json',
-
                     }
-
                 });
             console.log(data)
         } catch (error) {
-            console.log(error);
+            setServerError(error.response.data.error)
         }
     }
 
@@ -90,18 +105,30 @@ export default function AuthPage() {
                 {
                     headers: {
                         'Content-Type': 'application/json',
-
                     }
-
                 });
             console.log(data)
         } catch (error) {
-            console.log(error);
+            setServerError(error.response.data.error)
+        }
+    }
+    const authenticateMode = async (path, requestData) => {
+        try {
+            const { data } = await axios.post(path, JSON.stringify(requestData),
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+            console.log(data)
+        } catch (error) {
+            setServerError(error.response.data.error)
         }
     }
     const switchMode = () => {
         setIsSignup((prevIsSignup) => !prevIsSignup);
         setError({ email: "", password: "", fullName: "" })
+        setServerError("")
     }
 
 
@@ -110,6 +137,7 @@ export default function AuthPage() {
 
             <AuthFormContainer>
                 <StyledHeadline>{isSignup ? "Create an account" : "Login to your account"}</StyledHeadline>
+                {serverError && <StyledError>{serverError}</StyledError>}
                 {
                     isSignup ? <StyledInputContainer
                         label="Full name"
@@ -172,6 +200,12 @@ const StyledQuestion = styled.p`
     font-style: bold;
     margin: 1rem 2rem;
 `
+const StyledError = styled.p`
+    font-size: 1rem;
+    font-family: 'Public Sans', sans-serif;
+    color: ${Color.error100};
+`
+
 const AuthContainer = styled.div`
     height: 100vh;
     display: flex;
