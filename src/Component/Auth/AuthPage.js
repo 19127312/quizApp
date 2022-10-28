@@ -74,8 +74,7 @@ export default function AuthPage() {
                 {
                     headers: {
                         'Content-Type': 'application/json',
-                        "Access-Control-Allow-Origin": "*",
-                        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+
                     },
                     withCredentials: true
                 });
@@ -91,8 +90,7 @@ export default function AuthPage() {
                 {
                     headers: {
                         'Content-Type': 'application/json',
-                        "Access-Control-Allow-Origin": "*",
-                        "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+
                     },
                     withCredentials: true
                 });
