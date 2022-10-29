@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { StyledInputContainer, StyledInputRowContainer, InputRadio } from './Input'
 import { Color } from '../Constant'
 import loginPagePicture from '../assets/loginPagePicture.png'
+import logo from '../assets/logo.png'
 import { StyledButton } from './Button'
 import axios from '../api'
 import { PATH } from '../api'
@@ -84,34 +85,6 @@ export default function AuthPage() {
 
 
     }
-
-    const signIn = async (email, password) => {
-        try {
-            const { data } = await axios.post(PATH.LOGIN, JSON.stringify({ email, password }),
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-            console.log(data)
-        } catch (error) {
-            setServerError(error.response.data.error)
-        }
-    }
-
-    const signUp = async (email, password, fullName, type) => {
-        try {
-            const { data } = await axios.post(PATH.REGISTER, JSON.stringify({ email, password, fullName, type }),
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-            console.log(data)
-        } catch (error) {
-            setServerError(error.response.data.error)
-        }
-    }
     const authenticateMode = async (path, requestData) => {
         try {
             const { data } = await axios.post(path, JSON.stringify(requestData),
@@ -136,6 +109,10 @@ export default function AuthPage() {
         <AuthContainer>
 
             <AuthFormContainer>
+                <StyledLogoContainer>
+                    <img src={logo} alt="logo" />
+                    <StyledLogoName>Team Name</StyledLogoName>
+                </StyledLogoContainer>
                 <StyledHeadline>{isSignup ? "Create an account" : "Login to your account"}</StyledHeadline>
                 {serverError && <StyledError>{serverError}</StyledError>}
                 {
@@ -193,6 +170,21 @@ export default function AuthPage() {
     )
 }
 
+const StyledLogoContainer = styled.div`
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    display: flex;
+    align-items: center;
+`
+
+const StyledLogoName = styled.h1`
+    font-size: 2rem;
+    font-family: 'Sora', sans-serif;
+    line-height: 2rem;
+    margin-left: 10px;
+`
+
 const StyledQuestion = styled.p`
     font-size: 1rem;
     font-family: 'Public Sans', sans-serif;
@@ -222,7 +214,7 @@ const AuthFormContainer = styled.div`
 
 `
 const AuthContainerImage = styled.div`
-    flex:1;
+    flex:2;
     background-color: ${Color.secondary};
     display: flex;
     flex-direction: column;

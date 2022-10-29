@@ -1,11 +1,12 @@
 import AuthPage from './Component/Auth/AuthPage';
-
+import MainPage from './Component/MainPage/MainPage';
 function App() {
 
 
   return (
     <div>
-      <AuthPage />
+      {/* <AuthPage /> */}
+      <MainPage />
     </div>
   );
 }
