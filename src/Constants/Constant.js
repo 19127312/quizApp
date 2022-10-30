@@ -5,8 +5,8 @@ export const Color = {
     error100: "#f42644",
     error200: "#d52b48",
     error300: "#fee9ed",
-    gray300: "rgba(250,250,251,255)",
     gray100: "rgb(244,244,244)",
+    gray300: "rgba(250,250,251,255)",
 
 }
 

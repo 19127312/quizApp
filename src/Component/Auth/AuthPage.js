@@ -1,14 +1,24 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import styled from "styled-components"
+import { ThreeDots } from 'react-loader-spinner'
+import AuthContext from '../../Context/AuthProvider'
 import { StyledInputContainer, StyledInputRowContainer, InputRadio } from './Input'
-import { Color } from '../Constant'
-import loginPagePicture from '../assets/loginPagePicture.png'
-import logo from '../assets/logo.png'
+import { Color } from '../../Constants/Constant'
+import loginPagePicture from '../../Assets/loginPagePicture.png'
+import logo from '../../Assets/logo.png'
 import { StyledButton } from './Button'
-import axios from '../api'
-import { PATH } from '../api'
+import axios from '../../API/api'
+import { PATH } from '../../API/api'
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function AuthPage() {
+    const { setAuth } = useContext(AuthContext);
+
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/";
+
+
     const [fullName, setfullName] = useState("")
     const [email, setEmail] = useState("");
     const [pwd, setPwd] = useState("");
@@ -16,6 +26,7 @@ export default function AuthPage() {
     const [isSignup, setIsSignup] = useState(true);
     const [type, setType] = useState("Student");
 
+    const [isLoading, setIsLoading] = useState(false);
 
     const [error, setError] = useState({
         email: "",
@@ -67,6 +78,7 @@ export default function AuthPage() {
 
         if (!hasError) {
 
+            setIsLoading(true);
             if (isSignup) {
                 await authenticateMode(PATH.REGISTER, {
                     email,
@@ -94,8 +106,16 @@ export default function AuthPage() {
                     }
                 });
             console.log(data)
+            setServerError("")
+            // setAuth({ user: data.user, token: data.token });
+            setAuth({ user: data.user });
+            setIsLoading(false);
+            navigate(from, { replace: true });
+
         } catch (error) {
             setServerError(error.response.data.error)
+            setIsLoading(false);
+
         }
     }
     const switchMode = () => {
@@ -155,8 +175,20 @@ export default function AuthPage() {
                             onChange={event => handleSelectChange(event)} />
                     </StyledInputRowContainer> : <></>
                 }
+                {
+                    isLoading ? <ThreeDots
+                        height="80"
+                        width="80"
+                        radius="9"
+                        color={Color.primary}
+                        ariaLabel="three-dots-loading"
+                        wrapperStyle={{}}
+                        wrapperClassName=""
+                        visible={true}
+                    /> :
+                        <StyledButton marginSize={isSignup ? 1 : 2} onClick={handleSubmit} >{isSignup ? "Sign Up" : "Sign In"}</StyledButton>
+                }
 
-                <StyledButton marginSize={isSignup ? 1 : 2} onClick={handleSubmit} >{isSignup ? "Sign Up" : "Sign In"}</StyledButton>
                 <StyledQuestionSignUp>Already have an account?</StyledQuestionSignUp>
                 <StyledSignMode onClick={switchMode}>{isSignup ? "Sign In" : "Sign Up"}</StyledSignMode>
             </AuthFormContainer>
@@ -164,6 +196,7 @@ export default function AuthPage() {
                 <img src={loginPagePicture} alt="Login Page " />
                 <StyledImagePhrase>Welcome to Education Platform</StyledImagePhrase>
                 <StyledImageSecondPhrase>For student and teacher</StyledImageSecondPhrase>
+
             </AuthContainerImage>
         </AuthContainer>
 
@@ -179,7 +212,7 @@ const StyledLogoContainer = styled.div`
 `
 
 const StyledLogoName = styled.h1`
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-family: 'Sora', sans-serif;
     line-height: 2rem;
     margin-left: 10px;
@@ -214,7 +247,7 @@ const AuthFormContainer = styled.div`
 
 `
 const AuthContainerImage = styled.div`
-    flex:2;
+    flex:1;
     background-color: ${Color.secondary};
     display: flex;
     flex-direction: column;

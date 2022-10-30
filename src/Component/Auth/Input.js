@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Icon } from 'react-icons-kit'
 import { eye } from 'react-icons-kit/feather/eye'
 import { eyeOff } from 'react-icons-kit/feather/eyeOff'
-import { Color } from '../Constant';
+import { Color } from '../../Constants/Constant';
 
 export function StyledInputContainer({ label, ...props }) {
   const [type, setType] = useState('password');

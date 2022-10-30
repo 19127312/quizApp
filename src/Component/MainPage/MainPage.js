@@ -1,12 +1,10 @@
 import React, { useState } from 'react'
 import styled from "styled-components"
-import { Color } from '../Constant'
-import logo from '../assets/logo.png'
-import emptyFolder from '../assets/emptyFolder.png'
+import { Color } from '../../Constants/Constant'
+import logo from '../../Assets/logo.png'
+import emptyFolder from '../../Assets/emptyFolder.png'
 export default function MainPage() {
     return (
-
-
 
         <StyledPageContainer>
 
