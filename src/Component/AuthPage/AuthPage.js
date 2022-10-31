@@ -2,100 +2,60 @@ import React, { useState, useContext } from 'react'
 import styled from "styled-components"
 import { ThreeDots } from 'react-loader-spinner'
 import AuthContext from '../../Context/AuthProvider'
-import { StyledInputContainer, StyledInputRowContainer, InputRadio } from './Input'
 import { Color } from '../../Constants/Constant'
 import loginPagePicture from '../../Assets/loginPagePicture.png'
 import logo from '../../Assets/logo.png'
 import { StyledButton } from './Button'
 import axios from '../../API/api'
 import { PATH } from '../../API/api'
-import { useNavigate, useLocation, Navigate } from 'react-router-dom';
-
+import { useNavigate, useLocation, } from 'react-router-dom';
+import { useForm } from "react-hook-form";
+import { Icon } from 'react-icons-kit'
+import { eye } from 'react-icons-kit/feather/eye'
+import { eyeOff } from 'react-icons-kit/feather/eyeOff'
 export default function AuthPage({ mode }) {
     const { setAuth } = useContext(AuthContext);
+    const { register, formState: { errors }, handleSubmit, reset } = useForm();
 
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
 
-
-    const [fullName, setfullName] = useState("")
-    const [email, setEmail] = useState("");
-    const [pwd, setPwd] = useState("");
-
-    const [isSignup, setIsSignup] = useState(mode == "register" ? true : false);
-    const [type, setType] = useState("Student");
+    const [isSignup, setIsSignup] = useState(mode === "register" ? true : false);
 
     const [isLoading, setIsLoading] = useState(false);
 
-    const [error, setError] = useState({
-        email: "",
-        password: "",
-        fullName: "",
-    })
-
     const [serverError, setServerError] = useState("")
 
+    const [type, setType] = useState('password');
+    const [icon, setIcon] = useState(eyeOff);
 
-    const handleSelectChange = event => {
-        const value = event.target.value;
-        setType(value);
-    };
+    const handleToggle = () => {
+        if (type === 'password') {
+            setIcon(eye);
+            setType('text');
+        }
+        else {
+            setIcon(eyeOff);
+            setType('password');
+        }
+    }
 
-    const handleSubmit = async (e) => {
-        let hasError = false;
-        e.preventDefault();
+
+
+    const onSubmit = async (data) => {
+        console.log(data)
+        setIsLoading(true);
         if (isSignup) {
-            if (fullName.length === 0) {
-                setError(prev => ({ ...prev, fullName: "Full name is required" }))
-                hasError = true;
-            } else {
-                setError(prev => ({ ...prev, fullName: "" }))
-            }
-        }
-
-        if (email.length === 0) {
-            setError(prev => ({ ...prev, email: "Email is required" }))
-            hasError = true;
-        } else if (email.includes("@") === false) {
-            setError(prev => ({ ...prev, email: "Email is invalid" }))
-            hasError = true;
+            await authenticateMode(PATH.REGISTER, {
+                data
+            });
         } else {
-            setError(prev => ({ ...prev, email: "" }))
+            await authenticateMode(PATH.LOGIN, {
+                email: data.email,
+                password: data.password
+            });
         }
-
-        if (pwd.length === 0) {
-            setError(prev => ({ ...prev, password: "Password is required" }))
-            hasError = true;
-
-        } else if (pwd.length < 6) {
-            setError(prev => ({ ...prev, password: "Password must be at least 6 characters" }))
-            hasError = true;
-        } else {
-            setError(prev => ({ ...prev, password: "" }))
-        }
-
-
-        if (!hasError) {
-
-            setIsLoading(true);
-            if (isSignup) {
-                await authenticateMode(PATH.REGISTER, {
-                    email,
-                    password: pwd,
-                    fullName,
-                    type
-                });
-            } else {
-                await authenticateMode(PATH.LOGIN, {
-                    email,
-                    password: pwd
-                });
-            }
-        }
-
-
-
     }
     const authenticateMode = async (path, requestData) => {
         try {
@@ -119,79 +79,105 @@ export default function AuthPage({ mode }) {
     }
     const switchMode = () => {
         setIsSignup((prevIsSignup) => !prevIsSignup);
-        setError({ email: "", password: "", fullName: "" })
         setServerError("")
         navigate("/" + (isSignup ? "login" : "register"), { replace: true });
-    }
+        reset({
+            fullName: "",
+            email: "",
+            password: "",
 
+        })
+
+    }
 
     return (
         <AuthContainer>
 
-            <AuthFormContainer>
+            <AuthFormWrapper>
                 <StyledLogoContainer>
                     <img src={logo} alt="logo" />
                     <StyledLogoName>Team Name</StyledLogoName>
                 </StyledLogoContainer>
                 <StyledHeadline>{isSignup ? "Create an account" : "Login to your account"}</StyledHeadline>
                 {serverError && <StyledError>{serverError}</StyledError>}
-                {
-                    isSignup && <StyledInputContainer
-                        label="Full name"
-                        type="text"
-                        placeholder="Enter your name"
-                        value={fullName}
-                        error={error.fullName ? error.fullName : null}
-                        onChange={(e) => setfullName(e.target.value)} />
-                }
 
-                <StyledInputContainer
-                    label="Email"
-                    type="email"
-                    placeholder="example@gmail.com"
-                    value={email}
-                    error={error.email ? error.email : null}
-                    onChange={(e) => setEmail(e.target.value)} />
-                <StyledInputContainer
-                    label="Password"
-                    type="password"
-                    placeholder="Enter your password"
-                    value={pwd}
-                    error={error.password ? error.password : null}
-                    onChange={(e) => setPwd(e.target.value)} />
+                <AuthFormContainer onSubmit={handleSubmit(onSubmit)}>
+                    {
+                        isSignup && <StyledInputBox>
+                            <StyledErrorBox hasError={errors.fullName}>
+                                <StyledLabel htmlFor='fullName'>Full Name</StyledLabel>
+                                <StyledInput id="fullName" {...register('fullName', { required: true, maxLength: 30 })} placeholder="Enter your name" />
+                            </StyledErrorBox>
+                            {
+                                errors.fullName?.type === "required" && <StyledErrorMessage>Full Name is required</StyledErrorMessage>
+                            }
+                        </StyledInputBox>
+                    }
+                    <StyledInputBox>
+                        <StyledErrorBox hasError={errors.email}>
+                            <StyledLabel htmlFor='email'>Email</StyledLabel>
+                            <StyledInput id="email" {...register('email', { required: true, pattern: /^\S+@\S+$/i })} placeholder="abc@gmail.com" />
+                        </StyledErrorBox>
+                        {
+                            errors.email?.type === "required" && <StyledErrorMessage>Email is required</StyledErrorMessage>
+                        }
+                        {
+                            errors.email?.type === "pattern" && <StyledErrorMessage>Invalid Email</StyledErrorMessage>
+                        }
+                    </StyledInputBox>
 
-                {
-                    isSignup && <StyledInputRowContainer>
-                        <StyledQuestion>You are ?</StyledQuestion>
-                        <InputRadio
-                            label="Student"
-                            value="Student"
-                            checked={type === "Student"}
-                            onChange={event => handleSelectChange(event)} />
-                        <InputRadio
-                            label="Teacher"
-                            value="Teacher"
-                            checked={type === "Teacher"}
-                            onChange={event => handleSelectChange(event)} />
-                    </StyledInputRowContainer>
-                }
-                {
-                    isLoading ? <ThreeDots
-                        height="80"
-                        width="80"
-                        radius="9"
-                        color={Color.primary}
-                        ariaLabel="three-dots-loading"
-                        wrapperStyle={{}}
-                        wrapperClassName=""
-                        visible={true}
-                    /> :
-                        <StyledButton marginSize={isSignup ? 1 : 2} onClick={handleSubmit} >{isSignup ? "Sign Up" : "Sign In"}</StyledButton>
-                }
+                    <StyledInputBox>
+                        <StyledErrorBox hasError={errors.password}>
+                            <StyledLabel htmlFor='password'>Password</StyledLabel>
+                            <StyledInputRowContainer>
+                                <StyledInput id="password" {...register('password', { required: true, minLength: 6 })} placeholder="Enter your password" type={type} />
+                                <StyledInputPasswordIcon onClick={handleToggle} >
+                                    <Icon icon={icon} size={20} />
+                                </StyledInputPasswordIcon>
+                            </StyledInputRowContainer>
 
-                <StyledQuestionSignUp>Already have an account?</StyledQuestionSignUp>
+                        </StyledErrorBox>
+                        {
+                            errors.password?.type === "required" && <StyledErrorMessage>Password is required</StyledErrorMessage>
+                        }
+                        {
+                            errors.password?.type === "minLength" && <StyledErrorMessage>Password must be at least 6 digit!</StyledErrorMessage>
+                        }
+
+                    </StyledInputBox>
+
+                    {
+                        isSignup && <StyledInputRowContainer>
+                            <StyledQuestion>You are ?</StyledQuestion>
+                            <span>
+                                <input type="radio" cursor="pointer" {...register("type")} value="Student" id="Student" />
+                                <StyledRadioItem htmlFor="Student">Student</StyledRadioItem>
+                            </span>
+                            <span>
+                                <input type="radio" cursor="pointer" {...register("type")} value="Teacher" id="Teacher" />
+                                <StyledRadioItem htmlFor='Teacher'>Teacher</StyledRadioItem>
+                            </span>
+
+                        </StyledInputRowContainer>
+                    }
+                    {
+                        isLoading ? <ThreeDots
+                            height="80"
+                            width="80"
+                            radius="9"
+                            color={Color.primary}
+                            ariaLabel="three-dots-loading"
+                            wrapperStyle={{}}
+                            wrapperClassName=""
+                            visible={true}
+                        /> :
+                            <StyledButton marginSize={isSignup ? 1 : 2} onClick={handleSubmit} >{isSignup ? "Sign Up" : "Sign In"}</StyledButton>
+                    }
+                </AuthFormContainer>
+
+                <StyledQuestionSignUp>{isSignup ? "Already have an account ?" : "Don't have an account ?"}</StyledQuestionSignUp>
                 <StyledSignMode onClick={switchMode}>{isSignup ? "Sign In" : "Sign Up"}</StyledSignMode>
-            </AuthFormContainer>
+            </AuthFormWrapper>
             <AuthContainerImage >
                 <img src={loginPagePicture} alt="Login Page " />
                 <StyledImagePhrase>Welcome to Education Platform</StyledImagePhrase>
@@ -202,6 +188,91 @@ export default function AuthPage({ mode }) {
 
     )
 }
+
+const StyledRadioItem = styled.label`
+  font-family: 'Public Sans', sans-serif;
+  font-weight: 200;
+  font-style: thin;
+  font-size: 1rem;
+  margin: 0 1rem 0 0.5rem;
+`
+const StyledInputPasswordIcon = styled.span`
+  padding: 0.5rem;
+  cursor: pointer;
+`
+const StyledInputRowContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`
+
+const StyledLabel = styled.label`
+  font-size: 1rem;
+  font-family: 'Public Sans', sans-serif;
+  font-weight: 600;
+  font-style: bold;
+  margin: 0 0 0.1rem 0;
+  padding-left: 1rem;
+  padding-top: 0.5rem;
+`
+
+const StyledErrorBox = styled.div`
+  border-style: solid;
+  border-width: 2px;
+  border-color: ${props => props.hasError ? "red" : "rgb(248, 244, 244)"} ;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.25rem;
+`
+const StyledErrorMessage = styled.p`
+  color: ${Color.error100};
+  background-color: ${Color.error300};
+  padding-left: 1rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  border-radius: 0.25rem;
+  font-family: 'Public Sans', sans-serif;
+  font-size: 0.80rem;
+`
+
+const StyledInput = styled.input`
+  background: rgba(243,244,246,1);
+  border-radius: 6px;
+  
+  height: 2rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  
+  border-width: 0px;
+  outline: none;
+  font-size: 1rem;
+  font-family: 'Public Sans', sans-serif;
+  font-style: normal;
+  color: rgba(155,155,155,255);
+
+  &:focus {
+    color: rgba(188,193,202,1);
+  }
+  &::placeholder {
+    color: rgba(155,155,155,255);
+    font-weight: 10;
+    font-size: 1rem;
+  }
+  &:hover {
+    color: rgba(188,193,202,1);
+    background: rgba(243,244,246,1);
+  }
+`;
+const StyledInputBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  margin: 0.5rem 0;
+  background: rgba(243,244,246,255);
+  border-radius: 6px;  
+`
+
 
 const StyledLogoContainer = styled.div`
     position: absolute;
@@ -237,7 +308,7 @@ const AuthContainer = styled.div`
     align-content: stretch;
 
 `;
-const AuthFormContainer = styled.div`
+const AuthFormWrapper = styled.div`
     flex:1;
     display: flex;
     flex-direction: column;
@@ -245,6 +316,14 @@ const AuthFormContainer = styled.div`
     align-items: center;
     background-color: white;
 
+`
+const AuthFormContainer = styled.form`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    width: 100%;
 `
 const AuthContainerImage = styled.div`
     flex:1;
