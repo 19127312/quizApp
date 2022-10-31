@@ -9,9 +9,9 @@ import logo from '../../Assets/logo.png'
 import { StyledButton } from './Button'
 import axios from '../../API/api'
 import { PATH } from '../../API/api'
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 
-export default function AuthPage() {
+export default function AuthPage({ mode }) {
     const { setAuth } = useContext(AuthContext);
 
     const navigate = useNavigate();
@@ -23,7 +23,7 @@ export default function AuthPage() {
     const [email, setEmail] = useState("");
     const [pwd, setPwd] = useState("");
 
-    const [isSignup, setIsSignup] = useState(true);
+    const [isSignup, setIsSignup] = useState(mode == "register" ? true : false);
     const [type, setType] = useState("Student");
 
     const [isLoading, setIsLoading] = useState(false);
@@ -105,7 +105,6 @@ export default function AuthPage() {
                         'Content-Type': 'application/json',
                     }
                 });
-            console.log(data)
             setServerError("")
             // setAuth({ user: data.user, token: data.token });
             setAuth({ user: data.user });
@@ -122,6 +121,7 @@ export default function AuthPage() {
         setIsSignup((prevIsSignup) => !prevIsSignup);
         setError({ email: "", password: "", fullName: "" })
         setServerError("")
+        navigate("/" + (isSignup ? "login" : "register"), { replace: true });
     }
 
 
@@ -136,13 +136,13 @@ export default function AuthPage() {
                 <StyledHeadline>{isSignup ? "Create an account" : "Login to your account"}</StyledHeadline>
                 {serverError && <StyledError>{serverError}</StyledError>}
                 {
-                    isSignup ? <StyledInputContainer
+                    isSignup && <StyledInputContainer
                         label="Full name"
                         type="text"
                         placeholder="Enter your name"
                         value={fullName}
                         error={error.fullName ? error.fullName : null}
-                        onChange={(e) => setfullName(e.target.value)} /> : <></>
+                        onChange={(e) => setfullName(e.target.value)} />
                 }
 
                 <StyledInputContainer
@@ -161,7 +161,7 @@ export default function AuthPage() {
                     onChange={(e) => setPwd(e.target.value)} />
 
                 {
-                    isSignup ? <StyledInputRowContainer>
+                    isSignup && <StyledInputRowContainer>
                         <StyledQuestion>You are ?</StyledQuestion>
                         <InputRadio
                             label="Student"
@@ -173,7 +173,7 @@ export default function AuthPage() {
                             value="Teacher"
                             checked={type === "Teacher"}
                             onChange={event => handleSelectChange(event)} />
-                    </StyledInputRowContainer> : <></>
+                    </StyledInputRowContainer>
                 }
                 {
                     isLoading ? <ThreeDots

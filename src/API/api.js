@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export default axios.create({
-    baseURL: 'https://apiquizeducation.herokuapp.com'
+    baseURL: process.env.REACT_APP_URL_API
 });
 
 export const PATH = {
