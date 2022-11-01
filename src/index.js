@@ -4,7 +4,9 @@ import './index.css';
 import App from './App';
 import { AuthProvider } from './Context/AuthProvider';
 
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -12,7 +14,9 @@ root.render(
     <BrowserRouter>
       <AuthProvider>
         <Routes>
+
           <Route path="/*" element={<App />} />
+
         </Routes>
       </AuthProvider>
     </BrowserRouter>

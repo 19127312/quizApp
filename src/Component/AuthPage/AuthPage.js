@@ -6,13 +6,14 @@ import { Color } from '../../Constants/Constant'
 import loginPagePicture from '../../Assets/loginPagePicture.png'
 import logo from '../../Assets/logo.png'
 import { StyledButton } from './Button'
-import axios from '../../API/api'
-import { PATH } from '../../API/api'
+import { signup, login } from '../../API/api'
 import { useNavigate, useLocation, } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import { Icon } from 'react-icons-kit'
 import { eye } from 'react-icons-kit/feather/eye'
 import { eyeOff } from 'react-icons-kit/feather/eyeOff'
+import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query'
+
 export default function AuthPage({ mode }) {
     const { setAuth } = useContext(AuthContext);
     const { register, formState: { errors }, handleSubmit, reset } = useForm();
@@ -22,13 +23,13 @@ export default function AuthPage({ mode }) {
     const from = location.state?.from?.pathname || "/";
 
     const [isSignup, setIsSignup] = useState(mode === "register" ? true : false);
-
-    const [isLoading, setIsLoading] = useState(false);
-
+    // const [isLoading, setIsLoading] = useState(false);
     const [serverError, setServerError] = useState("")
 
     const [type, setType] = useState('password');
     const [icon, setIcon] = useState(eyeOff);
+    const [userData, setUserData] = useState({})
+    const queryClient = useQueryClient()
 
     const handleToggle = () => {
         if (type === 'password') {
@@ -41,42 +42,34 @@ export default function AuthPage({ mode }) {
         }
     }
 
+    const { isError, error, isLoading, mutateAsync } = useMutation(
+        signup,
+        {
+            onError: (error) => {
+                setServerError(error.message);
+            },
+            onSuccess: (data) => {
+                setAuth({ user: data.data.user });
+                navigate(from);
+            },
 
-
-    const onSubmit = async (data) => {
-        console.log(data)
-        setIsLoading(true);
-        if (isSignup) {
-            await authenticateMode(PATH.REGISTER, {
-                data
-            });
-        } else {
-            await authenticateMode(PATH.LOGIN, {
-                email: data.email,
-                password: data.password
-            });
         }
-    }
-    const authenticateMode = async (path, requestData) => {
+    );
+
+    const onSubmit = async (values) => {
         try {
-            const { data } = await axios.post(path, JSON.stringify(requestData),
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-            setServerError("")
-            // setAuth({ user: data.user, token: data.token });
-            setAuth({ user: data.user });
-            setIsLoading(false);
-            navigate(from, { replace: true });
-
+            await mutateAsync({
+                fullName: values.fullName,
+                email: values.email,
+                password: values.password,
+            });
         } catch (error) {
-            setServerError(error.response.data.error)
-            setIsLoading(false);
 
         }
+
+
     }
+
     const switchMode = () => {
         setIsSignup((prevIsSignup) => !prevIsSignup);
         setServerError("")
@@ -150,7 +143,7 @@ export default function AuthPage({ mode }) {
                         isSignup && <StyledInputRowContainer>
                             <StyledQuestion>You are ?</StyledQuestion>
                             <span>
-                                <input type="radio" cursor="pointer" {...register("type")} value="Student" id="Student" />
+                                <input type="radio" cursor="pointer" {...register("type")} value="Student" id="Student" checked={true} />
                                 <StyledRadioItem htmlFor="Student">Student</StyledRadioItem>
                             </span>
                             <span>
