@@ -15,7 +15,7 @@ export const login = async ({ email, password }) => {
         const response = await api.post(PATH.LOGIN, { email, password });
         return response;
     } catch (error) {
-        return error;
+        throw Error(error.response.data.error);;
     }
 }
 

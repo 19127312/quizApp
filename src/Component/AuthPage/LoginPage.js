@@ -6,30 +6,26 @@ import { Color } from '../../Constants/Constant'
 import loginPagePicture from '../../Assets/loginPagePicture.png'
 import logo from '../../Assets/logo.png'
 import { StyledButton } from './Button'
-import { signup, login } from '../../API/api'
+import { login } from '../../API/api'
 import { useNavigate, useLocation, } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import { Icon } from 'react-icons-kit'
 import { eye } from 'react-icons-kit/feather/eye'
 import { eyeOff } from 'react-icons-kit/feather/eyeOff'
-import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 
-export default function AuthPage({ mode }) {
+export default function LoginPage() {
     const { setAuth } = useContext(AuthContext);
-    const { register, formState: { errors }, handleSubmit, reset } = useForm();
-
+    const { register, formState: { errors }, handleSubmit } = useForm();
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
 
-    const [isSignup, setIsSignup] = useState(mode === "register" ? true : false);
-    // const [isLoading, setIsLoading] = useState(false);
     const [serverError, setServerError] = useState("")
 
     const [type, setType] = useState('password');
     const [icon, setIcon] = useState(eyeOff);
-    const [userData, setUserData] = useState({})
-    const queryClient = useQueryClient()
+
 
     const handleToggle = () => {
         if (type === 'password') {
@@ -42,8 +38,8 @@ export default function AuthPage({ mode }) {
         }
     }
 
-    const { isError, error, isLoading, mutateAsync } = useMutation(
-        signup,
+    const { isLoading, mutateAsync } = useMutation(
+        login,
         {
             onError: (error) => {
                 setServerError(error.message);
@@ -66,20 +62,12 @@ export default function AuthPage({ mode }) {
         } catch (error) {
 
         }
-
-
     }
+    const gotoSignup = () => {
 
-    const switchMode = () => {
-        setIsSignup((prevIsSignup) => !prevIsSignup);
-        setServerError("")
-        navigate("/" + (isSignup ? "login" : "register"), { replace: true });
-        reset({
-            fullName: "",
-            email: "",
-            password: "",
 
-        })
+        navigate("/register", { replace: true });
+
 
     }
 
@@ -91,21 +79,11 @@ export default function AuthPage({ mode }) {
                     <img src={logo} alt="logo" />
                     <StyledLogoName>Team Name</StyledLogoName>
                 </StyledLogoContainer>
-                <StyledHeadline>{isSignup ? "Create an account" : "Login to your account"}</StyledHeadline>
+                <StyledHeadline>Login to your account</StyledHeadline>
                 {serverError && <StyledError>{serverError}</StyledError>}
 
                 <AuthFormContainer onSubmit={handleSubmit(onSubmit)}>
-                    {
-                        isSignup && <StyledInputBox>
-                            <StyledErrorBox hasError={errors.fullName}>
-                                <StyledLabel htmlFor='fullName'>Full Name</StyledLabel>
-                                <StyledInput id="fullName" {...register('fullName', { required: true, maxLength: 30 })} placeholder="Enter your name" />
-                            </StyledErrorBox>
-                            {
-                                errors.fullName?.type === "required" && <StyledErrorMessage>Full Name is required</StyledErrorMessage>
-                            }
-                        </StyledInputBox>
-                    }
+
                     <StyledInputBox>
                         <StyledErrorBox hasError={errors.email}>
                             <StyledLabel htmlFor='email'>Email</StyledLabel>
@@ -139,20 +117,7 @@ export default function AuthPage({ mode }) {
 
                     </StyledInputBox>
 
-                    {
-                        isSignup && <StyledInputRowContainer>
-                            <StyledQuestion>You are ?</StyledQuestion>
-                            <span>
-                                <input type="radio" cursor="pointer" {...register("type")} value="Student" id="Student" checked={true} />
-                                <StyledRadioItem htmlFor="Student">Student</StyledRadioItem>
-                            </span>
-                            <span>
-                                <input type="radio" cursor="pointer" {...register("type")} value="Teacher" id="Teacher" />
-                                <StyledRadioItem htmlFor='Teacher'>Teacher</StyledRadioItem>
-                            </span>
 
-                        </StyledInputRowContainer>
-                    }
                     {
                         isLoading ? <ThreeDots
                             height="80"
@@ -164,12 +129,12 @@ export default function AuthPage({ mode }) {
                             wrapperClassName=""
                             visible={true}
                         /> :
-                            <StyledButton marginSize={isSignup ? 1 : 2} onClick={handleSubmit} >{isSignup ? "Sign Up" : "Sign In"}</StyledButton>
+                            <StyledButton marginSize={1} onClick={handleSubmit} >Sign In</StyledButton>
                     }
                 </AuthFormContainer>
 
-                <StyledQuestionSignUp>{isSignup ? "Already have an account ?" : "Don't have an account ?"}</StyledQuestionSignUp>
-                <StyledSignMode onClick={switchMode}>{isSignup ? "Sign In" : "Sign Up"}</StyledSignMode>
+                <StyledQuestionSignUp>Already have an account ?</StyledQuestionSignUp>
+                <StyledSignMode onClick={gotoSignup}>Sign Up</StyledSignMode>
             </AuthFormWrapper>
             <AuthContainerImage >
                 <img src={loginPagePicture} alt="Login Page " />
@@ -182,13 +147,7 @@ export default function AuthPage({ mode }) {
     )
 }
 
-const StyledRadioItem = styled.label`
-  font-family: 'Public Sans', sans-serif;
-  font-weight: 200;
-  font-style: thin;
-  font-size: 1rem;
-  margin: 0 1rem 0 0.5rem;
-`
+
 const StyledInputPasswordIcon = styled.span`
   padding: 0.5rem;
   cursor: pointer;
@@ -282,13 +241,7 @@ const StyledLogoName = styled.h1`
     margin-left: 10px;
 `
 
-const StyledQuestion = styled.p`
-    font-size: 1rem;
-    font-family: 'Public Sans', sans-serif;
-    font-weight: 600;
-    font-style: bold;
-    margin: 1rem 2rem;
-`
+
 const StyledError = styled.p`
     font-size: 1rem;
     font-family: 'Public Sans', sans-serif;
