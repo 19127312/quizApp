@@ -16,7 +16,7 @@ export default function MainPage() {
   const { auth } = useAuth();
   const { setAuth } = useContext(AuthContext);
 
-
+  //{Item.map((item) => TabItem tab={tab} setTab={setTab} item={item} checked={checked==item.id} />)}
   const handleClickTab = (index) => {
     setTab(index);
   };
