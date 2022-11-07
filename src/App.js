@@ -2,6 +2,7 @@
 import MainPage from './Component/MainPage/MainPage';
 import { Routes, Route } from 'react-router-dom';
 import PrivateRoutes from './Component/PrivateRoutes';
+import CheckingAuthRoutes from './Component/CheckingAuthRoutes';
 import SingupPage from "./Component/AuthPage/SignupPage"
 import LoginPage from './Component/AuthPage/LoginPage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -19,8 +20,10 @@ function App() {
     // </div>
     <QueryClientProvider client={queryClient}>
       <Routes>
-        <Route path="login" element={<LoginPage />} />
-        <Route path="register" element={<SingupPage />} />
+        <Route element={<CheckingAuthRoutes />} >
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<SingupPage />} />
+        </Route>
         <Route element={<PrivateRoutes />} >
           <Route path="/" element={<MainPage />} />
         </Route>

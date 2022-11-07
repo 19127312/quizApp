@@ -35,6 +35,7 @@ export default function MainPage() {
 
   const handleLogout = () => {
     setAuth({ user: null });
+    localStorage.removeItem("user");
   }
   return (
     <SC.StyledPageContainer>

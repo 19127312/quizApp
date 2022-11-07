@@ -45,8 +45,8 @@ export default function LoginPage() {
             onError: (error) => {
                 setServerError(error.message);
             },
-            onSuccess: (data) => {
-                setAuth({ user: data.data.user });
+            onSuccess: (responseData) => {
+                setAuth({ user: responseData.data.user });
                 navigate(from);
             },
 

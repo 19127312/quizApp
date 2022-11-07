@@ -97,7 +97,10 @@ export const StyledInputBox = styled.div`
   width: 50%;
   margin: 0.5rem 0;
   background: rgba(243,244,246,255);
-  border-radius: 6px;  
+  border-radius: 6px;
+  @media (max-width: 768px) {
+    width:80%;
+  }
 `
 
 
@@ -134,6 +137,10 @@ export const AuthContainer = styled.div`
     display: flex;
     align-content: stretch;
 
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
+
 `;
 export const AuthFormWrapper = styled.div`
     flex:1;
@@ -151,6 +158,7 @@ export const AuthFormContainer = styled.form`
     align-items: center;
     background-color: white;
     width: 100%;
+    
 `
 export const AuthContainerImage = styled.div`
     flex:1;
@@ -159,6 +167,9 @@ export const AuthContainerImage = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    @media (max-width: 768px) {
+        display: none;
+  }
 `
 export const StyledImagePhrase = styled.p`
     color: white;
@@ -179,6 +190,9 @@ export const StyledHeadline = styled.h1`
     font-family: 'Sora', sans-serif;
     line-height: 2rem;
     margin: 0 0 2rem 0;
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
 `
 export const StyledQuestionSignUp = styled.p`
     font-size: 0.9rem;
