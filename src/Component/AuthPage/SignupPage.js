@@ -43,8 +43,9 @@ export default function SingupPage() {
             onError: (error) => {
                 setServerError(error.message);
             },
-            onSuccess: (data) => {
-                setAuth({ user: data.data.user });
+            onSuccess: (responseData) => {
+                const { accessToken, user } = responseData.data;
+                setAuth({ user, accessToken });
                 navigate(from);
             },
 

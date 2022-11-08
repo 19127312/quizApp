@@ -95,7 +95,7 @@ export const StyledSettingContainer = styled.div`
 
 export const StyledSettingLists = styled.div`
     position: absolute;
-    bottom: 115px;
+    bottom: 65px;
     right: 10px;
     width: 60%;
     height: 10%;
@@ -104,17 +104,16 @@ export const StyledSettingLists = styled.div`
 export const StyledSettingItem = styled.div`
     font-family: 'Public Sans', sans-serif;
     border-radius: 10px;
-
     font-size: 1rem;
     font-style: normal;
     font-weight: 400;
     margin:2px;
     padding: 10px;
     width: 100%;
-    border-bottom: 1px solid ${Color.gray100};
     cursor: pointer;
     &:hover{
         background-color: ${Color.gray100};
+        
     }
 `
 export const StyledSettingBox = styled.div`

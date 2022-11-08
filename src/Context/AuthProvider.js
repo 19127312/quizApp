@@ -1,24 +1,31 @@
 import { useEffect } from "react";
 import { createContext, useState } from "react";
-
+import { getProfile } from "../API/api";
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-    const [auth, setAuth] = useState(() => {
-        const user = localStorage.getItem("user");
-        if (user) {
-            return { user: JSON.parse(user) };
-
-        }
-        return { user: null };
-    });
+    const [auth, setAuth] = useState({ user: null, accessToken: null });
     useEffect(() => {
-        // const user = JSON.parse(localStorage.getItem("user"));
-        // if (user) {
-        //     setAuth({ user });
-        // }
-        auth.user && localStorage.setItem("user", JSON.stringify(auth.user));
+        if (auth.accessToken) {
+            localStorage.setItem("accessToken", auth.accessToken);
+        }
     }, [auth]);
+    useEffect(() => {
+        async function getProfileUser() {
+            const accessToken = localStorage.getItem("accessToken");
+            if (accessToken) {
+                try {
+                    const response = await getProfile(accessToken);
+                    const { user } = response.data;
+                    setAuth({ user, accessToken });
+                } catch (error) {
+                    localStorage.removeItem("accessToken");
+                }
+            }
+        }
+        getProfileUser()
+    }, [])
+
     return (
         <AuthContext.Provider value={{ auth, setAuth }}>
             {children}

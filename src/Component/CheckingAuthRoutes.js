@@ -5,7 +5,6 @@ import React from 'react'
 export default function CheckingAuthRoutes() {
     const { auth } = useAuth();
     const location = useLocation();
-    console.log(auth.user);
     return (
         auth.user ? <Navigate to="/" state={{ from: location }} replace /> : <Outlet />
     )

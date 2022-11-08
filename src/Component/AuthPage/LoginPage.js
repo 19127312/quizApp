@@ -1,11 +1,9 @@
 import React, { useState, useContext } from 'react'
-import styled from "styled-components"
 import { ThreeDots } from 'react-loader-spinner'
 import AuthContext from '../../Context/AuthProvider'
 import { Color } from '../../Constants/Constant'
 import loginPagePicture from '../../Assets/loginPagePicture.png'
 import logo from '../../Assets/logo.png'
-import { StyledButton } from './StyledAuthComponents'
 import { login } from '../../API/api'
 import { useNavigate, useLocation, } from 'react-router-dom';
 import { useForm } from "react-hook-form";
@@ -46,7 +44,8 @@ export default function LoginPage() {
                 setServerError(error.message);
             },
             onSuccess: (responseData) => {
-                setAuth({ user: responseData.data.user });
+                const { accessToken, user } = responseData.data;
+                setAuth({ user, accessToken });
                 navigate(from);
             },
 
