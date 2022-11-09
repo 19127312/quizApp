@@ -48,7 +48,6 @@ export default function SingupPage() {
                 setAuth({ user, accessToken });
                 navigate(from);
             },
-
         }
     );
 
@@ -62,8 +61,6 @@ export default function SingupPage() {
         } catch (error) {
 
         }
-
-
     }
 
     const gotoLogin = () => {

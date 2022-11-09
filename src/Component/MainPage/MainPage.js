@@ -19,18 +19,7 @@ export default function MainPage() {
   // const handleClickTab = (index) => {
   //   setTab(index);
   // };
-  const menuRef = useRef()
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setIsOpenSetting(false)
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-  })
+
 
   const handleLogout = () => {
     setAuth({ user: null, accessToken: null });

@@ -64,11 +64,7 @@ export default function LoginPage() {
         }
     }
     const gotoSignup = () => {
-
-
         navigate("/register", { replace: true });
-
-
     }
 
     return (
