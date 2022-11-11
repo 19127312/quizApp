@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem("accessToken", auth.accessToken);
         }
     }, [auth]);
+
     useEffect(() => {
         async function getProfileUser() {
             const accessToken = localStorage.getItem("accessToken");

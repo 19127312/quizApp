@@ -6,7 +6,7 @@ import loginPagePicture from '../../Assets/loginPagePicture.png'
 import logo from '../../Assets/logo.png'
 import * as SC from './StyledAuthComponents'
 import { signup } from '../../API/api'
-import { useNavigate, useLocation, } from 'react-router-dom';
+import { useNavigate, } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import { Icon } from 'react-icons-kit'
 import { eye } from 'react-icons-kit/feather/eye'
@@ -18,8 +18,6 @@ export default function SingupPage() {
     const { register, formState: { errors }, handleSubmit } = useForm();
 
     const navigate = useNavigate();
-    const location = useLocation();
-    const from = location.state?.from?.pathname || "/";
 
     const [serverError, setServerError] = useState("")
 
@@ -46,7 +44,6 @@ export default function SingupPage() {
             onSuccess: (responseData) => {
                 const { accessToken, user } = responseData.data;
                 setAuth({ user, accessToken });
-                navigate(from);
             },
         }
     );

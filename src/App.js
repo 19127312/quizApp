@@ -19,16 +19,22 @@ function App() {
     //   {/* <MainPage /> */}
     // </div>
     <QueryClientProvider client={queryClient}>
+
       <Routes>
+
         <Route element={<CheckingAuthRoutes />} >
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<SingupPage />} />
         </Route>
+
         <Route element={<PrivateRoutes />} >
           <Route path="/" element={<MainPage />} />
         </Route>
+
         <Route path="*" element={<div>404</div>} />
+
       </Routes>
+
     </QueryClientProvider>
   );
 }

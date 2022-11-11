@@ -5,7 +5,7 @@ import { Color } from '../../Constants/Constant'
 import loginPagePicture from '../../Assets/loginPagePicture.png'
 import logo from '../../Assets/logo.png'
 import { login } from '../../API/api'
-import { useNavigate, useLocation, } from 'react-router-dom';
+import { useNavigate, } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import { Icon } from 'react-icons-kit'
 import { eye } from 'react-icons-kit/feather/eye'
@@ -17,8 +17,6 @@ export default function LoginPage() {
     const { setAuth } = useContext(AuthContext);
     const { register, formState: { errors }, handleSubmit } = useForm();
     const navigate = useNavigate();
-    const location = useLocation();
-    const from = location.state?.from?.pathname || "/";
 
     const [serverError, setServerError] = useState("")
 
@@ -46,7 +44,6 @@ export default function LoginPage() {
             onSuccess: (responseData) => {
                 const { accessToken, user } = responseData.data;
                 setAuth({ user, accessToken });
-                navigate(from);
             },
 
         }
